@@ -2,20 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Stellar Payment Platform</title>
+  <title>Stellar Payment</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico"> <!-- اگه favicon داری -->
 </head>
 <body>
-  <h1>Stellar Payment Platform</h1>
-  <form id="paymentForm">
-    <label>Number of Receivers: <input type="number" id="numReceivers" min="1" value="3"></label><br>
-    <label>Amounts (comma-separated): <input type="text" id="amounts" value="50,30,20"></label><br>
-    <button type="submit">Start Payments</button>
-  </form>
-  <div id="output"></div>
-  <button onclick="showHistory()">Show History</button>
-  <div id="history"></div>
+  <div class="container">
+    <h1>Stellar Payment</h1>
+    
+    <form id="paymentForm" class="form-section">
+      <div class="input-group">
+        <label for="numReceivers">Number of Receivers:</label>
+        <input type="number" id="numReceivers" min="1" placeholder="Enter number of receivers" required>
+      </div>
+      <div class="input-group">
+        <label for="amounts">Amounts (comma-separated):</label>
+        <input type="text" id="amounts" placeholder="e.g., 50,30,20" required>
+      </div>
+      <button type="submit" class="btn">Start Payments</button>
+    </form>
+
+    <div id="output" class="output-section"></div>
+
+    <div class="button-group">
+      <button onclick="showHistory()" class="btn">Show History</button>
+      <button onclick="clearHistory()" class="btn">Clear History</button>
+    </div>
+    <div id="history" class="history-section"></div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>

@@ -18,30 +18,42 @@ app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.get("/start", async (req, res) => {
   try {
-    const numReceivers = parseInt(req.query.receivers) || 3;
+    const numReceivers = parseInt(req.query.receivers);
     const amounts = req.query.amounts
       ? req.query.amounts.split(",").map(Number)
-      : [50, 30, 20];
+      : [];
 
     console.log("Starting payment process...");
-    console.log("Num Receivers:", numReceivers);
-    console.log("Amounts:", amounts);
+    console.log("Raw numReceivers:", req.query.receivers);
+    console.log("Parsed numReceivers:", numReceivers);
+    console.log("Raw amounts:", req.query.amounts);
+    console.log("Parsed amounts:", amounts);
+
+    if (isNaN(numReceivers) || numReceivers < 1) {
+      throw new Error("Number of receivers must be a positive integer");
+    }
 
     const accounts = createAccounts(numReceivers);
+    console.log("Accounts:", JSON.stringify(accounts, null, 2));
+
     await fundAccounts(accounts);
     await logTransaction(
       path.join(__dirname, "../data/logs.txt"),
       "Accounts funded with test XLM"
     );
 
+    let adjustedAmounts = amounts.slice(0, numReceivers);
+    if (adjustedAmounts.length < numReceivers) {
+      adjustedAmounts = adjustedAmounts.concat(
+        Array(numReceivers - adjustedAmounts.length).fill(0)
+      );
+    }
+    console.log("Adjusted amounts:", adjustedAmounts);
+
     const transactions = await sendPayments(
       accounts.issuer,
       accounts.receivers,
-      amounts.length === numReceivers
-        ? amounts
-        : amounts
-            .slice(0, numReceivers)
-            .concat(Array(numReceivers - amounts.length).fill(0))
+      adjustedAmounts
     );
     await logTransaction(
       path.join(__dirname, "../data/logs.txt"),
@@ -64,7 +76,11 @@ app.get("/start", async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error("Error in /start:", error);
-    res.status(500).json({ error: error.message });
+    // ارسال جزئیات خطا به کلاینت
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data || "No additional details available",
+    });
   }
 });
 
@@ -77,6 +93,19 @@ app.get("/history", async (req, res) => {
     res.json(JSON.parse(data));
   } catch (error) {
     res.status(500).json({ error: "No history available" });
+  }
+});
+
+app.post("/clear-history", async (req, res) => {
+  try {
+    await fs.writeFile(
+      path.join(__dirname, "../data/payments.json"),
+      JSON.stringify({ transactions: [] })
+    );
+    await fs.writeFile(path.join(__dirname, "../data/logs.txt"), "");
+    res.json({ message: "History cleared successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
