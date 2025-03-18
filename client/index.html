@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stellar Payment Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico"> <!-- اگه favicon داری -->
+</head>
+<body>
+  <h1>Stellar Payment Platform</h1>
+  <form id="paymentForm">
+    <label>Number of Receivers: <input type="number" id="numReceivers" min="1" value="3"></label><br>
+    <label>Amounts (comma-separated): <input type="text" id="amounts" value="50,30,20"></label><br>
+    <button type="submit">Start Payments</button>
+  </form>
+  <div id="output"></div>
+  <button onclick="showHistory()">Show History</button>
+  <div id="history"></div>
+  <script src="script.js"></script>
+</body>
+</html>
