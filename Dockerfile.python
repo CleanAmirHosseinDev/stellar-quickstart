@@ -1,0 +1,18 @@
+# 1. استفاده از Python 3.9 به عنوان Base Image
+FROM python:3.9
+
+# 2. تنظیم مسیر کاری
+WORKDIR /app
+
+# 3. کپی و نصب وابستگی‌ها
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 4. کپی کل پروژه داخل کانتینر
+COPY . .
+COPY data /app/data
+# 5. مشخص کردن پورتی که برنامه روی آن اجرا می‌شود
+EXPOSE 5000
+
+# 6. اجرای برنامه
+CMD ["python", "analytics/analyze.py"]

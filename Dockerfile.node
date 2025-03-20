@@ -1,0 +1,20 @@
+# ۱. استفاده از Node.js ۱۸ به عنوان Base Image
+FROM node:18
+
+# ۲. تنظیم مسیر کاری
+WORKDIR /app
+
+# ۳. کپی package.json و package-lock.json قبل از نصب وابستگی‌ها
+COPY package*.json ./
+
+# ۴. نصب وابستگی‌ها
+RUN npm install
+
+# ۵. کپی بقیه فایل‌های پروژه داخل کانتینر
+COPY . .
+
+# ۶. مشخص کردن پورتی که برنامه روی آن اجرا می‌شود
+EXPOSE 3000
+
+# ۷. اجرای برنامه
+CMD ["npm", "start"]
