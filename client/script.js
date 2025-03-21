@@ -1,9 +1,7 @@
-// ثابت‌ها
 const BASE_URL = "http://localhost:3000";
 const COIN_NAME = "COIN";
-const TIMEOUT_MS = 30000; // 30 ثانیه تایم‌اوت
+const TIMEOUT_MS = 30000; 
 
-// تابع کمکی برای نمایش پیام‌ها با انیمیشن لودینگ
 function displayMessage(element, message, isError = false) {
   const html = isError
     ? `<span style="color: red;">Error: ${message}</span>`
@@ -15,7 +13,6 @@ function displayMessage(element, message, isError = false) {
   element.innerHTML = html;
 }
 
-// تابع اعتبارسنجی ورودی‌ها
 function validateInputs(numReceiversInput, amountsInput) {
   const numReceivers = parseInt(numReceiversInput, 10);
   const amounts = amountsInput
@@ -47,7 +44,6 @@ function validateInputs(numReceiversInput, amountsInput) {
   return { valid: true, numReceivers, amounts };
 }
 
-// تابع فرمت خروجی پرداخت‌ها
 function formatOutput(data) {
   return `
     <div class="result-section">
@@ -80,7 +76,6 @@ function formatOutput(data) {
   `;
 }
 
-// تابع فرمت تاریخچه
 function formatHistory(data) {
   return `
     <div class="history-section">
@@ -117,7 +112,6 @@ function formatHistory(data) {
   `;
 }
 
-// ارسال فرم پرداخت
 document
   .getElementById("paymentForm")
   .addEventListener("submit", async (event) => {
@@ -177,7 +171,6 @@ document
     }
   });
 
-// نمایش تاریخچه
 async function showHistory() {
   const historyDiv = document.getElementById("history");
   displayMessage(historyDiv, "Loading history...");
@@ -208,7 +201,6 @@ async function showHistory() {
   }
 }
 
-// پاک کردن تاریخچه
 async function clearHistory() {
   const historyDiv = document.getElementById("history");
   displayMessage(historyDiv, "Clearing history...");
