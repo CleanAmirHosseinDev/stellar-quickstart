@@ -4,31 +4,66 @@
   <meta charset="UTF-8">
   <title>Stellar Payment</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body>
+<body class="light-theme">
   <div class="container">
     <h1>Stellar Payment</h1>
-    
+
     <form id="paymentForm" class="form-section">
       <div class="input-group">
         <label for="numReceivers">Number of Receivers:</label>
         <input type="number" id="numReceivers" min="1" placeholder="Enter number of receivers" required>
       </div>
       <div class="input-group">
-        <label for="amounts">Amounts (comma-separated):</label>
-        <input type="text" id="amounts" placeholder="e.g., 50,30,20" required>
+        <label for="amounts">Amounts:</label>
+        <input type="text" id="amounts" placeholder="e.g., 50,30,20" required oninput="formatAmounts(event)">
       </div>
       <button type="submit" class="btn">Start Payments</button>
     </form>
 
     <div id="output" class="output-section"></div>
 
-    <div class="button-group">
-      <button onclick="showHistory()" class="btn">Show History</button>
-      <button onclick="clearHistory()" class="btn">Clear History</button>
+    <div class="theme-toggle top-right">
+      <select id="themeSelect" class="btn" onchange="changeTheme(event)">
+        <option value="light" selected>
+          <span class="icon">&#9728;</span> Light
+        </option>
+        <option value="dim">
+          <span class="icon">&#127769;</span> Dim
+        </option>
+        <option value="dark">
+          <span class="icon">&#127774;</span> Dark
+        </option>
+      </select>
     </div>
-    <div id="history" class="history-section"></div>
+
+    <div id="history" class="history-section">
+      <h2>Transaction History</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Transaction Hash</th>
+              <th>Method</th>
+              <th>Block</th>
+              <th>Age</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Amount</th>
+              <th>Txn Fee</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="pagination">
+      <p>Latest 25 from a total of 12,956 transactions</p>
+    </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
