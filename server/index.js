@@ -2,6 +2,11 @@ const express = require("express");
 const { createAccounts } = require("./accounts");
 const { fundAccounts, sendPayments, getBalances } = require("./transactions");
 const { saveData, logTransaction } = require("./storage");
+const {
+  createPropertyAsset,
+  depositPropertyToken,
+  withdrawPropertyToken,
+} = require("./stellarService");
 const path = require("path");
 const fs = require("fs").promises;
 
@@ -9,12 +14,98 @@ const app = express();
 const port = 3000;
 
 app.use(express.static(path.join(__dirname, "../client")));
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../client", "index.html"));
 });
 
 app.get("/favicon.ico", (req, res) => res.status(204).end());
+
+// مسیر جدید برای توکن‌سازی ملک
+app.post("/create-asset", async (req, res) => {
+  try {
+    const { issuerSecret, assetCode, amount } = req.body;
+
+    if (!issuerSecret || !assetCode || !amount) {
+      throw new Error("Issuer secret, asset code, and amount are required");
+    }
+
+    const result = await createPropertyAsset(issuerSecret, assetCode, amount);
+    await logTransaction(
+      path.join(__dirname, "../data/logs.txt"),
+      `Asset ${assetCode} created with amount ${amount}`
+    );
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error in /create-asset:", error);
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data || "No additional details available",
+    });
+  }
+});
+
+// مسیر جدید برای واریز توکن‌های ملک
+app.post("/deposit-token", async (req, res) => {
+  try {
+    const { issuerSecret, destinationPublicKey, assetCode, amount } = req.body;
+
+    if (!issuerSecret || !destinationPublicKey || !assetCode || !amount) {
+      throw new Error("All fields are required for deposit");
+    }
+
+    const result = await depositPropertyToken(
+      issuerSecret,
+      destinationPublicKey,
+      assetCode,
+      amount
+    );
+    await logTransaction(
+      path.join(__dirname, "../data/logs.txt"),
+      `Token ${assetCode} deposited to ${destinationPublicKey}`
+    );
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error in /deposit-token:", error);
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data || "No additional details available",
+    });
+  }
+});
+
+// مسیر جدید برای برداشت توکن‌های ملک
+app.post("/withdraw-token", async (req, res) => {
+  try {
+    const { sourceSecret, issuerPublicKey, assetCode, amount } = req.body;
+
+    if (!sourceSecret || !issuerPublicKey || !assetCode || !amount) {
+      throw new Error("All fields are required for withdrawal");
+    }
+
+    const result = await withdrawPropertyToken(
+      sourceSecret,
+      issuerPublicKey,
+      assetCode,
+      amount
+    );
+    await logTransaction(
+      path.join(__dirname, "../data/logs.txt"),
+      `Token ${assetCode} withdrawn from ${issuerPublicKey}`
+    );
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error in /withdraw-token:", error);
+    res.status(500).json({
+      error: error.message,
+      details: error.response?.data || "No additional details available",
+    });
+  }
+});
 
 app.get("/start", async (req, res) => {
   try {
@@ -76,7 +167,6 @@ app.get("/start", async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error("Error in /start:", error);
-    // ارسال جزئیات خطا به کلاینت
     res.status(500).json({
       error: error.message,
       details: error.response?.data || "No additional details available",

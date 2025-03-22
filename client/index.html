@@ -10,6 +10,7 @@
   <div class="container">
     <h1>Stellar Payment</h1>
 
+    <!-- فرم پرداخت‌ها -->
     <form id="paymentForm" class="form-section">
       <div class="input-group">
         <label for="numReceivers">Number of Receivers:</label>
@@ -22,8 +23,72 @@
       <button type="submit" class="btn">Start Payments</button>
     </form>
 
+    <!-- فرم توکن‌سازی ملک -->
+    <form id="createAssetForm" class="form-section">
+      <h2>Create Property Token</h2>
+      <div class="input-group">
+        <label for="issuerSecret">Issuer Secret Key:</label>
+        <input type="text" id="issuerSecret" placeholder="Enter issuer secret key" required>
+      </div>
+      <div class="input-group">
+        <label for="assetCode">Asset Code:</label>
+        <input type="text" id="assetCode" placeholder="e.g., PROPERTY" required>
+      </div>
+      <div class="input-group">
+        <label for="assetAmount">Amount:</label>
+        <input type="text" id="assetAmount" placeholder="Enter amount" required>
+      </div>
+      <button type="submit" class="btn">Create Token</button>
+    </form>
+
+    <!-- فرم واریز توکن‌های ملک -->
+    <form id="depositTokenForm" class="form-section">
+      <h2>Deposit Property Token</h2>
+      <div class="input-group">
+        <label for="depositIssuerSecret">Issuer Secret Key:</label>
+        <input type="text" id="depositIssuerSecret" placeholder="Enter issuer secret key" required>
+      </div>
+      <div class="input-group">
+        <label for="destinationPublicKey">Destination Public Key:</label>
+        <input type="text" id="destinationPublicKey" placeholder="Enter destination public key" required>
+      </div>
+      <div class="input-group">
+        <label for="depositAssetCode">Asset Code:</label>
+        <input type="text" id="depositAssetCode" placeholder="e.g., PROPERTY" required>
+      </div>
+      <div class="input-group">
+        <label for="depositAmount">Amount:</label>
+        <input type="text" id="depositAmount" placeholder="Enter amount" required>
+      </div>
+      <button type="submit" class="btn">Deposit Token</button>
+    </form>
+
+    <!-- فرم برداشت توکن‌های ملک -->
+    <form id="withdrawTokenForm" class="form-section">
+      <h2>Withdraw Property Token</h2>
+      <div class="input-group">
+        <label for="withdrawSourceSecret">Source Secret Key:</label>
+        <input type="text" id="withdrawSourceSecret" placeholder="Enter source secret key" required>
+      </div>
+      <div class="input-group">
+        <label for="withdrawIssuerPublicKey">Issuer Public Key:</label>
+        <input type="text" id="withdrawIssuerPublicKey" placeholder="Enter issuer public key" required>
+      </div>
+      <div class="input-group">
+        <label for="withdrawAssetCode">Asset Code:</label>
+        <input type="text" id="withdrawAssetCode" placeholder="e.g., PROPERTY" required>
+      </div>
+      <div class="input-group">
+        <label for="withdrawAmount">Amount:</label>
+        <input type="text" id="withdrawAmount" placeholder="Enter amount" required>
+      </div>
+      <button type="submit" class="btn">Withdraw Token</button>
+    </form>
+
+    <!-- بخش نمایش خروجی -->
     <div id="output" class="output-section"></div>
 
+    <!-- انتخاب تم -->
     <div class="theme-toggle top-right">
       <select id="themeSelect" class="btn" onchange="changeTheme(event)">
         <option value="light" selected>
@@ -38,6 +103,7 @@
       </select>
     </div>
 
+    <!-- بخش تاریخچه تراکنش‌ها -->
     <div id="history" class="history-section">
       <h2>Transaction History</h2>
       <div class="table-container">
@@ -59,6 +125,7 @@
       </div>
     </div>
 
+    <!-- بخش صفحه‌بندی -->
     <div id="pagination">
       <p>Latest 25 from a total of 12,956 transactions</p>
     </div>

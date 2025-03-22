@@ -8,6 +8,15 @@ let totalTransactions = 0;
 document
   .getElementById("paymentForm")
   .addEventListener("submit", handleFormSubmit);
+document
+  .getElementById("createAssetForm")
+  .addEventListener("submit", handleCreateAssetSubmit);
+document
+  .getElementById("depositTokenForm")
+  .addEventListener("submit", handleDepositTokenSubmit);
+document
+  .getElementById("withdrawTokenForm")
+  .addEventListener("submit", handleWithdrawTokenSubmit);
 document.getElementById("themeSelect").addEventListener("change", changeTheme);
 
 window.onload = initializePage;
@@ -37,10 +46,134 @@ async function handleFormSubmit(event) {
   }
 }
 
+async function handleCreateAssetSubmit(event) {
+  event.preventDefault();
+
+  const issuerSecret = document.getElementById("issuerSecret").value;
+  const assetCode = document.getElementById("assetCode").value;
+  const amount = document.getElementById("assetAmount").value;
+  const output = document.getElementById("output");
+
+  showLoader();
+
+  try {
+    const data = await fetchCreateAsset(issuerSecret, assetCode, amount);
+    hideLoader();
+    displayTransactionData(output, data);
+  } catch (error) {
+    hideLoader();
+    showError(output, error.message);
+  }
+}
+
+async function handleDepositTokenSubmit(event) {
+  event.preventDefault();
+
+  const issuerSecret = document.getElementById("depositIssuerSecret").value;
+  const destinationPublicKey = document.getElementById(
+    "destinationPublicKey"
+  ).value;
+  const assetCode = document.getElementById("depositAssetCode").value;
+  const amount = document.getElementById("depositAmount").value;
+  const output = document.getElementById("output");
+
+  showLoader();
+
+  try {
+    const data = await fetchDepositToken(
+      issuerSecret,
+      destinationPublicKey,
+      assetCode,
+      amount
+    );
+    hideLoader();
+    displayTransactionData(output, data);
+  } catch (error) {
+    hideLoader();
+    showError(output, error.message);
+  }
+}
+
+async function handleWithdrawTokenSubmit(event) {
+  event.preventDefault();
+
+  const sourceSecret = document.getElementById("withdrawSourceSecret").value;
+  const issuerPublicKey = document.getElementById(
+    "withdrawIssuerPublicKey"
+  ).value;
+  const assetCode = document.getElementById("withdrawAssetCode").value;
+  const amount = document.getElementById("withdrawAmount").value;
+  const output = document.getElementById("output");
+
+  showLoader();
+
+  try {
+    const data = await fetchWithdrawToken(
+      sourceSecret,
+      issuerPublicKey,
+      assetCode,
+      amount
+    );
+    hideLoader();
+    displayTransactionData(output, data);
+  } catch (error) {
+    hideLoader();
+    showError(output, error.message);
+  }
+}
+
 async function fetchTransactionData(numReceivers, amounts) {
   const response = await fetch(
     `${BASE_URL}/start?receivers=${numReceivers}&amounts=${amounts.join(",")}`
   );
+  return await response.json();
+}
+
+async function fetchCreateAsset(issuerSecret, assetCode, amount) {
+  const response = await fetch(`${BASE_URL}/create-asset`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ issuerSecret, assetCode, amount }),
+  });
+  return await response.json();
+}
+
+async function fetchDepositToken(
+  issuerSecret,
+  destinationPublicKey,
+  assetCode,
+  amount
+) {
+  const response = await fetch(`${BASE_URL}/deposit-token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      issuerSecret,
+      destinationPublicKey,
+      assetCode,
+      amount,
+    }),
+  });
+  return await response.json();
+}
+
+async function fetchWithdrawToken(
+  sourceSecret,
+  issuerPublicKey,
+  assetCode,
+  amount
+) {
+  const response = await fetch(`${BASE_URL}/withdraw-token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ sourceSecret, issuerPublicKey, assetCode, amount }),
+  });
   return await response.json();
 }
 
