@@ -125,8 +125,27 @@ function setThemeMode(theme) {
 }
 
 function formatAmounts(event) {
-  const inputValue = event.target.value.replace(/,/g, "");
-  event.target.value = formatNumber(inputValue);
+  const input = event.target;
+  const raw = input.value;
+  const parts = raw.split(",").map((p) => p.trim());
+
+  const formatted = parts.map((part) => {
+    let clean = part.replace(/[^0-9.]/g, "");
+
+    const subparts = clean.split(".");
+    if (subparts.length > 2) {
+      clean = subparts[0] + "." + subparts.slice(1).join("");
+    }
+
+    if (subparts.length === 2) {
+      subparts[1] = subparts[1].substring(0, 7);
+      clean = subparts[0] + "." + subparts[1];
+    }
+
+    return clean;
+  });
+
+  input.value = formatted.join(", ");
 }
 
 function formatNumber(number) {
